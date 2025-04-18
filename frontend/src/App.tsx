@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FileUpload } from './components/FileUpload';
 import { FileList } from './components/FileList';
+import { StorageStats } from './components/StorageStats';
 
 function App() {
   const [refreshKey, setRefreshKey] = useState(0);
@@ -25,6 +26,7 @@ function App() {
             <div className="bg-white shadow sm:rounded-lg">
               <FileUpload onUploadSuccess={handleUploadSuccess} />
             </div>
+            <StorageStats />
             <div className="bg-white shadow sm:rounded-lg">
               <FileList key={refreshKey} />
             </div>

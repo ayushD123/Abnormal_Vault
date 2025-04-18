@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { fileService } from '../services/fileService';
 import { File as FileType } from '../types/file';
 import { DocumentIcon, TrashIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { SearchFilter } from './SearchFilter';
 
 export const FileList: React.FC = () => {
   const queryClient = useQueryClient();
+  const [filters, setFilters] = useState<Record<string, string>>({});
 
-  // Query for fetching files
+  // Query for fetching files with filters
   const { data: files, isLoading, error } = useQuery({
-    queryKey: ['files'],
-    queryFn: fileService.getFiles,
+    queryKey: ['files', filters],
+    queryFn: () => fileService.getFiles(filters),
   });
 
   // Mutation for deleting files
@@ -41,6 +43,10 @@ export const FileList: React.FC = () => {
     } catch (err) {
       console.error('Download error:', err);
     }
+  };
+
+  const handleFilterChange = (newFilters: Record<string, string>) => {
+    setFilters(newFilters);
   };
 
   if (isLoading) {
@@ -88,12 +94,18 @@ export const FileList: React.FC = () => {
   return (
     <div className="p-6">
       <h2 className="text-xl font-semibold text-gray-900 mb-4">Uploaded Files</h2>
+      
+      {/* Search and Filter Component */}
+      <SearchFilter onFilterChange={handleFilterChange} />
+
       {!files || files.length === 0 ? (
         <div className="text-center py-12">
           <DocumentIcon className="mx-auto h-12 w-12 text-gray-400" />
           <h3 className="mt-2 text-sm font-medium text-gray-900">No files</h3>
           <p className="mt-1 text-sm text-gray-500">
-            Get started by uploading a file
+            {Object.keys(filters).length > 0 
+              ? "No files match your search criteria" 
+              : "Get started by uploading a file"}
           </p>
         </div>
       ) : (
@@ -142,4 +154,4 @@ export const FileList: React.FC = () => {
       )}
     </div>
   );
-}; 
+};

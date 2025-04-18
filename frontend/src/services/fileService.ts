@@ -16,8 +16,19 @@ export const fileService = {
     return response.data;
   },
 
-  async getFiles(): Promise<FileType[]> {
-    const response = await axios.get(`${API_URL}/files/`);
+  async getFiles(filters: Record<string, string> = {}): Promise<FileType[]> {
+    // Build query parameters
+    const params = new URLSearchParams();
+    
+    // Map frontend filter names to backend parameter names
+    if (filters.search) params.append('search', filters.search);
+    if (filters.fileType) params.append('file_type', filters.fileType);
+    if (filters.sizeMin) params.append('size_min', filters.sizeMin);
+    if (filters.sizeMax) params.append('size_max', filters.sizeMax);
+    if (filters.uploadedFrom) params.append('uploaded_from', filters.uploadedFrom);
+    if (filters.uploadedTo) params.append('uploaded_to', filters.uploadedTo);
+
+    const response = await axios.get(`${API_URL}/files/`, { params });
     return response.data;
   },
 
@@ -46,4 +57,9 @@ export const fileService = {
       throw new Error('Failed to download file');
     }
   },
-}; 
+
+  async getStorageStatistics() {
+    const response = await axios.get(`${API_URL}/files/statistics/`);
+    return response.data;
+  },
+};
