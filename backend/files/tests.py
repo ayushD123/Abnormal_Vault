@@ -108,6 +108,21 @@ class FileModelTests(TestCase):
         duplicate = File.objects.filter(is_duplicate=True).first()
         self.assertEqual(duplicate.storage_saved, 0)
     
+    # def test_file_upload_path(self):
+    #     """Test that uploaded files get unique paths with UUID"""
+    #     from .models import file_upload_path
+        
+    #     filename = "test.txt"
+    #     instance = File()
+    #     upload_path = file_upload_path(instance, filename)
+        
+    #     self.assertTrue(upload_path.startswith('uploads/'))
+    #     self.assertTrue(upload_path.endswith('.txt'))
+    #     # Check that filename is a UUID
+    #     uuid_part = upload_path.split('/')[-1].split('.')[0]
+    #     self.assertEqual(len(uuid_part), 36)  # UUID length
+
+    # Update tests.py - FileModelTests.test_file_upload_path
     def test_file_upload_path(self):
         """Test that uploaded files get unique paths with UUID"""
         from .models import file_upload_path
@@ -118,9 +133,12 @@ class FileModelTests(TestCase):
         
         self.assertTrue(upload_path.startswith('uploads/'))
         self.assertTrue(upload_path.endswith('.txt'))
-        # Check that filename is a UUID
-        uuid_part = upload_path.split('/')[-1].split('.')[0]
-        self.assertEqual(len(uuid_part), 36)  # UUID length
+        # Check that filename is a UUID (minus the extension)
+        path_parts = upload_path.split('/')
+        file_name_with_ext = path_parts[-1]
+        file_name_without_ext = file_name_with_ext.split('.')[0]
+        # UUID v4 has 32 hex characters plus 4 hyphens = 36 characters
+        self.assertEqual(len(file_name_without_ext), 36)
 
 class StorageStatisticsTests(TestCase):
     """Test cases for StorageStatistics model"""
