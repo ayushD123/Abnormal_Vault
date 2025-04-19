@@ -1,0 +1,4 @@
+# backend/requirements-test.txt
+coverage==7.3.2
+factory-boy==3.3.0
+faker==22.0.0
